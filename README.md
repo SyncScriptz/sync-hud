@@ -2,6 +2,12 @@
 
 clean customizable hud for fivem. made by kxirby at sync scripts.
 
+<img width="626" height="399" alt="Screenshot_2025-11-29_141612-removebg-preview" src="https://github.com/user-attachments/assets/47686a12-7cf1-486a-bf10-9dc7d2bb3b23" />
+
+<img width="372" height="244" alt="Screenshot_2025-11-29_141642-removebg-preview" src="https://github.com/user-attachments/assets/b582e4b9-a3d2-4d1c-8f6b-cc0748b619bc" />
+
+
+
 ## features
 
 - 8 color themes (clean, darkness, neon, ocean, sunset, forest, blood, royal)
