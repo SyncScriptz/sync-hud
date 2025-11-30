@@ -37,20 +37,17 @@ AddEventHandler('sync-hud:requestConfig', function()
     })
 end)
 
--- Save player settings
 RegisterNetEvent('sync-hud:saveSettings')
 AddEventHandler('sync-hud:saveSettings', function(settings)
     local src = source
     local identifier = GetPlayerIdentifier(src, 0)
     
     if identifier and Config.SaveSettings then
-        -- You can save to database here if needed
-        -- For now we rely on client-side KVP
+
         print('[SYNC-HUD] Settings saved for ' .. GetPlayerName(src))
     end
 end)
 
--- Admin command
 if Config.AdminCommand then
     RegisterCommand(Config.AdminCommand, function(source, args, rawCommand)
         local src = source
@@ -60,10 +57,10 @@ if Config.AdminCommand then
             return
         end
         
-        -- Check admin
+   
         local isAdmin = false
         
-        -- ESX Admin check
+     
         if GetResourceState('es_extended') == 'started' then
             local ESX = exports['es_extended']:getSharedObject()
             local xPlayer = ESX.GetPlayerFromId(src)
@@ -78,7 +75,7 @@ if Config.AdminCommand then
             end
         end
         
-        -- QB Admin check
+ 
         if GetResourceState('qb-core') == 'started' then
             local QBCore = exports['qb-core']:GetCoreObject()
             local Player = QBCore.Functions.GetPlayer(src)
