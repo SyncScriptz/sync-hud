@@ -1,17 +1,10 @@
---[[
-    ╔═══════════════════════════════════════════════════════════════╗
-    ║                        SYNC HUD                               ║
-    ║                 Premium HUD for FiveM                         ║
-    ║                      by kxirby                                ║
-    ╚═══════════════════════════════════════════════════════════════╝
-]]
 
--- Framework detection
+
 local Framework = nil
 local PlayerData = nil
 local PlayerLoaded = false
 
--- State variables
+
 local currentHealth = 100
 local currentArmor = 0
 local currentHunger = 100
@@ -27,9 +20,6 @@ local isSeatbeltOn = false
 local settingsOpen = false
 local isDead = false
 
--- ========================
--- FRAMEWORK DETECTION
--- ========================
 
 CreateThread(function()
     local framework = Config.Framework
@@ -105,23 +95,20 @@ CreateThread(function()
         end)
         
     elseif framework == 'ox' then
-        -- Ox Core support
+     
         PlayerLoaded = true
         
     else
-        -- Standalone
+        
         PlayerLoaded = true
     end
     
-    -- Request server config
+    
     TriggerServerEvent('sync-hud:requestConfig')
     
     print('[SYNC-HUD] Framework initialized, player loaded: ' .. tostring(PlayerLoaded))
 end)
 
--- ========================
--- MINIMAP HANDLING
--- ========================
 
 local minimapEnabled = false
 
@@ -142,9 +129,6 @@ exports('ToggleMinimap', function(state)
     DisplayRadar(state)
 end)
 
--- ========================
--- RECEIVE SERVER CONFIG
--- ========================
 
 RegisterNetEvent('sync-hud:receiveConfig')
 AddEventHandler('sync-hud:receiveConfig', function(serverConfig)
@@ -154,9 +138,6 @@ AddEventHandler('sync-hud:receiveConfig', function(serverConfig)
     })
 end)
 
--- ========================
--- FUEL SYSTEM COMPATIBILITY
--- ========================
 
 local function GetFuel(vehicle)
     local fuel = 100
@@ -207,16 +188,14 @@ local function GetFuel(vehicle)
     return math.floor(GetVehicleFuelLevel(vehicle) or 100)
 end
 
--- ========================
--- MONEY SYSTEM
--- ========================
+
 
 local function GetMoney()
     local cash, bank = 0, 0
     
     if not Framework then return cash, bank end
     
-    -- ESX
+ 
     if GetResourceState('es_extended') == 'started' then
         local playerData = Framework.GetPlayerData()
         if playerData and playerData.accounts then
@@ -230,8 +209,7 @@ local function GetMoney()
         end
         return cash, bank
     end
-    
-    -- QBCore
+
     if GetResourceState('qb-core') == 'started' then
         local playerData = Framework.Functions.GetPlayerData()
         if playerData and playerData.money then
@@ -244,16 +222,12 @@ local function GetMoney()
     return cash, bank
 end
 
--- ========================
--- SEATBELT COMPATIBILITY
--- ========================
 
 -- Direct state setter (most reliable)
 local function SetSeatbeltState(state)
     isSeatbeltOn = state
 end
 
--- ============ ESX SEATBELT SCRIPTS ============
 
 RegisterNetEvent('esx_seatbelt:onEnter')
 AddEventHandler('esx_seatbelt:onEnter', function()
@@ -287,7 +261,7 @@ AddEventHandler('seatbelt:client:SetSeatbelt', function(state)
     SetSeatbeltState(state)
 end)
 
--- ============ QB SEATBELT SCRIPTS ============
+
 
 RegisterNetEvent('qb-seatbelt:client:ToggleSeatbelt')
 AddEventHandler('qb-seatbelt:client:ToggleSeatbelt', function()
@@ -299,7 +273,7 @@ AddEventHandler('seatbelt:client:Toggle', function()
     SetSeatbeltState(not isSeatbeltOn)
 end)
 
--- ============ OTHER SEATBELT SCRIPTS ============
+
 
 RegisterNetEvent('cd_seatbelt:toggle')
 AddEventHandler('cd_seatbelt:toggle', function()
@@ -351,7 +325,7 @@ AddEventHandler('mx-seatbelt:client:ToggleSeatbelt', function()
     SetSeatbeltState(not isSeatbeltOn)
 end)
 
--- Standalone seatbelt (generic events)
+
 RegisterNetEvent('Seatbelt:Toggle')
 AddEventHandler('Seatbelt:Toggle', function()
     SetSeatbeltState(not isSeatbeltOn)
@@ -367,7 +341,6 @@ AddEventHandler('ToggleSeatbelt', function()
     SetSeatbeltState(not isSeatbeltOn)
 end)
 
--- Statebag support for seatbelt (ox_lib / modern scripts)
 if GetResourceState('ox_lib') == 'started' then
     AddStateBagChangeHandler('seatbelt', ('player:%s'):format(GetPlayerServerId(PlayerId())), function(_, _, value)
         if value ~= nil then
@@ -376,7 +349,6 @@ if GetResourceState('ox_lib') == 'started' then
     end)
 end
 
--- Also listen to local player state
 AddStateBagChangeHandler('seatbelt', nil, function(bagName, key, value)
     if bagName == ('player:%s'):format(GetPlayerServerId(PlayerId())) then
         if value ~= nil then
@@ -385,7 +357,6 @@ AddStateBagChangeHandler('seatbelt', nil, function(bagName, key, value)
     end
 end)
 
--- Reset seatbelt on exit vehicle
 CreateThread(function()
     local wasInVehicle = false
     while true do
@@ -398,7 +369,6 @@ CreateThread(function()
     end
 end)
 
--- Fallback: Check for common seatbelt resource exports
 CreateThread(function()
     Wait(2000)
     while true do
@@ -416,9 +386,7 @@ CreateThread(function()
     end
 end)
 
--- ========================
--- HUNGER/THIRST COMPATIBILITY
--- ========================
+
 
 RegisterNetEvent('esx_status:onTick')
 AddEventHandler('esx_status:onTick', function(data)
@@ -469,9 +437,7 @@ AddEventHandler('Metabolic:UpdateThirst', function(thirst)
     if thirst then currentThirst = math.floor(thirst) end
 end)
 
--- ========================
--- DEATH HANDLING
--- ========================
+
 
 RegisterNetEvent('esx:onPlayerDeath')
 AddEventHandler('esx:onPlayerDeath', function()
@@ -497,9 +463,7 @@ AddEventHandler('ambulancejob:client:SetDeathState', function(state)
     SendNUIMessage({ action = 'setDead', dead = state })
 end)
 
--- ========================
--- MAIN HUD UPDATE LOOP
--- ========================
+
 
 CreateThread(function()
     while true do
@@ -599,9 +563,7 @@ CreateThread(function()
     end
 end)
 
--- ========================
--- COMMANDS & KEYBINDS
--- ========================
+
 
 RegisterCommand('hudsettings', function()
     if not settingsOpen then
@@ -619,9 +581,7 @@ end, false)
 
 RegisterKeyMapping('togglehud', 'Toggle HUD', 'keyboard', Config.ToggleKeybind)
 
--- ========================
--- NUI CALLBACKS
--- ========================
+
 
 RegisterNUICallback('closeSettings', function(data, cb)
     settingsOpen = false
@@ -650,9 +610,6 @@ RegisterNUICallback('loadSettings', function(data, cb)
     cb(nil)
 end)
 
--- ========================
--- ADMIN EVENTS
--- ========================
 
 RegisterNetEvent('sync-hud:reload')
 AddEventHandler('sync-hud:reload', function()
@@ -667,9 +624,7 @@ AddEventHandler('sync-hud:resetSettings', function()
     SendNUIMessage({ action = 'resetSettings' })
 end)
 
--- ========================
--- EXPORTS
--- ========================
+
 
 exports('ToggleHUD', function(state)
     SendNUIMessage({ action = state and 'show' or 'hide' })
